@@ -78,11 +78,34 @@ def egcd(a, b):
     # return gcd, x, y
     return old_r, old_s, old_t
 
-def encrypt(e, n, msg):
-    pass
+#Encryption & Decryption
+#Encryption using Fast Modular Exponentiation Algorithm (recursively)
+def encryption(m, e, n):
+    #Returns c = m^e * (mod n)
+    if e == 0:
+        return 1
+    if e%2 == 0:
+        t = encryption(m, e//2, n)
+        return (t*t)%n
+    else:
+        t = encryption(m, e//2, n)
+        return m *(t**2%n)%n
+#c = encryption(m, e, n)
+#print("Encrypted message: ", c)
 
-def decrypt(d, n, cipher):
-    pass
+#Decryption using Fast Modular Exponentiation Algorithm (recursively)
+def decryption(c, d, n):
+    #Returns m = c^d * (mod n)
+    if d == 0:
+        return 1
+    if d%2 == 0:
+        t = decryption(c, d//2, n)
+        return (t*t)%n
+    else:
+        t = decryption(c, d//2, n)
+        return c *(t**2%n)%n
+#m = decryption(c, d, n)
+#print("Decrypted message: ", m)
 
 def main():
     key_size = 32
@@ -101,9 +124,49 @@ def main():
     print(f"Decrypted message: {decrypted_msg}")
 
 
-main()
+if __name__ == "__main__":
+    main()
+
+'''
+#Encryption & Decryption
+m = int(input("Enter message to be encrypted: "))
+#Encryption using Fast Modular Exponentiation Algorithm (recursively)
+def encryption(m, e, n):
+    #Returns c = m^e * (mod n)
+    if e == 0:
+        return 1
+    if e%2 == 0:
+        t = encryption(m, e//2, n)
+        return (t*t)%n
+    else:
+        t = encryption(m, e//2, n)
+        return m *(t**2%n)%n
 
 
+c = encryption(m, e, n)
+print("Encrypted message: ", c)
+
+#Decryption using Fast Modular Exponentiation Algorithm (recursively)
+def decryption(c, d, n):
+    #Returns m = c^d * (mod N)
+    if d == 0:
+        return 1
+    if d%2 == 0:
+        t = decryption(c, d//2, n)
+        return (t*t)%n
+    else:
+        t = decryption(c, d//2, n)
+        return c *(t**2%n)%n
+
+m = decryption(c, d, n)
+print("Decrypted message: ", m)
+
+def main():
+    
+
+if __name__ == "__main__":
+    main()
+'''
 
 # KEY GENERATION
 # Step 1: Generate two large pseudo primes p and q (Fermat's test)
