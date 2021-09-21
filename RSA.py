@@ -112,7 +112,8 @@ def main():
     e, d, n = generate_keys(key_size)
 
     msg = "some message"
-
+   
+    
     encrypted_msg = encrypt(e, n, msg)
     decrypted_msg = decrypt(d, n, encrypted_msg)
 
@@ -124,37 +125,30 @@ def main():
     print(f"Decrypted message: {decrypted_msg}")
 
 
-# This file signs a file with the owner's private key and
-# verifies the signature with the owners public key
-import rsa
 
-
-# Open key file and return key data
-def file_open(file):
-    key_file = open(file, 'rb')
-    key_data = key_file.read()
-    key_file.close()
-    return key_data
-
-
-# Open private key file and load in key
-privkey = rsa.PrivateKey.load_pkcs1(file_open('privatekey.key'))
-
-# Open the secret message file and return data to variable
-message = file_open('message')
-
-
-# Sign the message with the owners private key
-signature = rsa.sign(message, privkey, 'SHA-512')
-
-s = open('signature_file','wb')
-s.write(signature)
-
-
-print(signature)
-print(len(signature))
-
-
+# Enter the message to be sent
+M = 19070
+ 
+# Signature is created by author
+S = (M ** d) % n
+ 
+#verify
+# Author sends M and S both to reader
+# Reader generates message M1 using the
+# signature S, authors's public key e and product n.
+M1 = (S**e) % n
+ 
+#check authenticity
+# If M = M1 only then reader accepts
+# the message sent by author.
+ 
+if M == M1:
+    print("As M = M1, Accept the\
+    message sent by author")
+else:
+    print("As M not equal to M1,\
+    Do not accept the message\
+    sent by author ")
 if __name__ == "__main__":
     main()
 
@@ -237,7 +231,7 @@ if __name__ == "__main__":
 #   Open message and return data in it
 #   Create stamp on file
 #   Sugn the message with owners private key
-#   Then save the signature and print it
+#   Then save the signature in a file and print it
 #
 
 
