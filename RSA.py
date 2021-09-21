@@ -124,8 +124,40 @@ def main():
     print(f"Decrypted message: {decrypted_msg}")
 
 
+# This file signs a file with the owner's private key and
+# verifies the signature with the owners public key
+import rsa
+
+
+# Open key file and return key data
+def file_open(file):
+    key_file = open(file, 'rb')
+    key_data = key_file.read()
+    key_file.close()
+    return key_data
+
+
+# Open private key file and load in key
+privkey = rsa.PrivateKey.load_pkcs1(file_open('privatekey.key'))
+
+# Open the secret message file and return data to variable
+message = file_open('message')
+
+
+# Sign the message with the owners private key
+signature = rsa.sign(message, privkey, 'SHA-512')
+
+s = open('signature_file','wb')
+s.write(signature)
+
+
+print(signature)
+print(len(signature))
+
+
 if __name__ == "__main__":
     main()
+
 
 
 
@@ -195,3 +227,17 @@ if __name__ == "__main__":
 #  Decryption
 #     m = c^d * (mod N)
 #
+#
+#
+# DIGITAL SIGNATURE
+#Steps:
+#   Imported the RSA library
+#   Created function to open files
+#   Run private key through the function
+#   Open message and return data in it
+#   Create stamp on file
+#   Sugn the message with owners private key
+#   Then save the signature and print it
+#
+
+
