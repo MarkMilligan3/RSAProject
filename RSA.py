@@ -141,7 +141,7 @@ if M == M1:
     print("M = M1, Accept the\
     message sent by author")
 else:
-    print("M not equal to M1,\
+    print("M != M1,\
     Do not accept the message\
     sent by author ")
 
