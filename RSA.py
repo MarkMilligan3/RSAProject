@@ -154,20 +154,14 @@ M = 19070
 S = pow(ord(M),d) % n
  
 #verify
-# Author sends M and S both to reader
-# Reader generates message M1 using the
-# signature S, authors's public key e and product n.
 M1 = pow(S,e) % n
  
 #check authenticity
-# If M = M1 only then reader accepts
-# the message sent by author.
- 
 if M == M1:
-    print("As M = M1, Accept the\
+    print("M = M1, Accept the\
     message sent by author")
 else:
-    print("As M not equal to M1,\
+    print("M not equal to M1,\
     Do not accept the message\
     sent by author ")
 if __name__ == "__main__":
@@ -240,3 +234,10 @@ if __name__ == "__main__":
 #  Decryption
 #     m = c^d * (mod N)
 #
+#
+#SIGNATURE
+# Enter the message to be sent
+# Signature is created by author
+# Author sends M and S both to reader
+# Reader generates message M1 using the signature S, authors's public key e and product n.
+# If M = M1 only then reader accepts the message sent by author.
