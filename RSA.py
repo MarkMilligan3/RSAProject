@@ -138,11 +138,11 @@ M1 = pow(S,e) % n
  
 #check authenticity
 if M == M1:
-    print("M = M1, Accept the\
+    print("M = M1, Therefore, accept the\
     message sent by author")
 else:
     print("M != M1,\
-    Do not accept the message\
+    Therefore, do not accept the message\
     sent by author ")
 
 
