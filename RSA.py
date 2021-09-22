@@ -4,12 +4,12 @@ from shlex import join
 
 
 def is_prime(num):
-    is_it = False
+    yes_it_is = False
     for i in range(2, num):
         if num % i == 0:
-            is_it = True
+            yes_it_is = True
             break
-        if (is_it == False) and (num != 1):
+        if (yes_it_is == False) and (num != 1):
             return num
 
 
@@ -27,26 +27,38 @@ def generate_keys():
     prime_num = generate_large_prime()
     prime_list = []
     for k in prime_num:
-        if k > 127:
+        if k > 127: # This is the last value of ASCII
             prime_list.append(k)
 
+    # Step 1: Generate two large pseudo primes p and q (Fermat's test)
     p = choice(prime_list)
     q = choice(prime_list)
 
+    # Step 2: Calculate RSA modulus, N, which = p * q
     n = p * q
 
+    # Step 3: Calculate the Euclidean totient, phi(N), which = (p - 1)(q - 1)
     phi_n = (p - 1) * (q - 1)
 
     print("p = ", p)
     print("q = ", q)
-    print("N = ", n)
+    print("n = ", n)
     print("phi_n = ", phi_n)
 
+    # Step 4: Choose e, a public key that will be used to encrypt data
+    #         that is relatively prime (shares no common denominator) with phi(N)
+    #         and is less than phi(N)
+    #         1 < e <= phi(N)
     for i in range(1, n):
         if (i < n) and (gcd(i, phi_n) == 1):
             e_list = []
             e_list.append(i)
     e = choice(e_list)
+
+    # Step 5: Calculate d, a private key that will be used to decrypt data
+    #         that is a modular multiplicative inverse of e over phi(N)
+    #         e * d (mod phi(N)) = 1
+    #   5.1: Euclidean Algorithm
     for i in range(1, n):
         d = i
         if ((e * d) % phi_n) == 1:
@@ -63,17 +75,17 @@ e, d, n = generate_keys()
 
 def encryption(p, e, n):
     print("Public Key = ({},{})".format(n, e))
-    PT_encode = []
-    CT = []
-
+    p_text = []
+    c_text = []
+    # gives ASCII value of each character of the plaintext and stores it in p_text list
     for i in p:
-        PT_encode.append(ord(i))
-    print("Plaintext (in ASCII) = ", PT_encode)
-
-    for P in PT_encode:
-        CT.append((P ** e) % n)
-    print("Encryption of plaintext (in ASCII) = ", CT)
-    return CT
+        p_text.append(ord(i))
+    print("Plaintext (in ASCII) = ", p_text)
+    # retrieves elements one by one and compute cipher storing it in c_text list
+    for P in p_text:
+        c_text.append((P ** e) % n)
+    print("Encryption of plaintext (in ASCII) = ", c_text)
+    return c_text
 
 
 plaintext = input("Enter the message you want to encrypt: ")
@@ -84,67 +96,29 @@ ciphertext = encryption(plaintext, e, n)
 
 def decryption(c, d, n):
     print("Private Key = ({},{})".format(n, d))
-    PT = []
+    ptext = []
+    # retrieves each character from ciphertext list (c) and computes plaintext storing in plaintext list
     for C in c:
-        PT.append((c ** d) % n)
-    print("Decryption of cyphertext (in ASCII) = ", PT)
+        ptext.append((c ** d) % n)
+    print("Decryption of cyphertext (in ASCII) = ", ptext)
     plaintext = []
-    for j in PT:
+    # converts ASCII number in plaintext to an alphabet character
+    for j in ptext:
         plaintext.append(chr(j))
+    # combines the alphabet characters together into one string
     print("Plaintext = ", "", join(plaintext))
     return plaintext
 
-
 P = decryption(ciphertext, d, n)
 
-
-def encryption(m, e, n):
-    # Returns c = m^e * (mod n)
-    if e == 0:
-        return 1
-    if e % 2 == 0:
-        t = encryption(m, e // 2, n)
-        return (t * t) % n
-    else:
-        t = encryption(m, e // 2, n)
-        return m * (t ** 2 % n) % n
-
-
-# c = encryption(m, e, n)
-# print("Encrypted message: ", c)
-
-# Decryption using Fast Modular Exponentiation Algorithm (recursively)
-def decryption(c, d, n):
-    # Returns m = c^d * (mod n)
-    if d == 0:
-        return 1
-    if d % 2 == 0:
-        t = decryption(c, d // 2, n)
-        return (t * t) % n
-    else:
-        t = decryption(c, d // 2, n)
-        return c * (t ** 2 % n) % n
-
-
-# m = decryption(c, d, n)
-# print("Decrypted message: ", m)
-
 def main():
-    key_size = 32
-    e, d, n = generate_keys(key_size)
     privkey = e
 
-    msg = "some message"
+    msg = ""
 
     encrypted_msg = encryption(msg, e, n)
     decrypted_msg = decryption(encrypted_msg, d, n)
 
-    print(f"Message: {msg}")
-    print(f"e: {e}")
-    print(f"d: {d}")
-    print(f"n: {n}")
-    print(f"Encrypted message: {encrypted_msg}")
-    print(f"Decrypted message: {decrypted_msg}")
 
 
 import rsa
