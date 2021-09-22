@@ -59,7 +59,6 @@ def generate_keys():
 
 
 e, d, n = generate_keys()
-<<<<<<< HEAD
 
 
 def encryption(p, e, n):
@@ -83,40 +82,11 @@ print("Plaintext = ", plaintext)
 ciphertext = encryption(plaintext, e, n)
 
 
-=======
-
-
-def encryption(p, e, n):
-    print("Public Key = ({},{})".format(n, e))
-    PT_encode = []
-    CT = []
-
-    for i in p:
-        PT_encode.append(ord(i))
-    print("Plaintext (in ASCII) = ", PT_encode)
-
-    for P in PT_encode:
-        CT.append((P ** e) % n)
-    print("Encryption of plaintext (in ASCII) = ", CT)
-    return CT
-
-
-plaintext = input("Enter the message you want to encrypt: ")
-print("Plaintext = ", plaintext)
-
-ciphertext = encryption(plaintext, e, n)
-
-
->>>>>>> ebd4ecc22536cddccc8f7739eed2299628892f2d
 def decryption(c, d, n):
     print("Private Key = ({},{})".format(n, d))
     PT = []
     for C in c:
-<<<<<<< HEAD
         PT.append(pow(c, d) % n)
-=======
-        PT.append((c ** d) % n)
->>>>>>> ebd4ecc22536cddccc8f7739eed2299628892f2d
     print("Decryption of cyphertext (in ASCII) = ", PT)
     plaintext = []
     for j in PT:
@@ -139,17 +109,10 @@ def encryption(m, e, n):
         t = encryption(m, e // 2, n)
         return m * (t ** 2 % n) % n
 
-<<<<<<< HEAD
 
 # c = encryption(m, e, n)
 # print("Encrypted message: ", c)
 
-=======
-
-# c = encryption(m, e, n)
-# print("Encrypted message: ", c)
-
->>>>>>> ebd4ecc22536cddccc8f7739eed2299628892f2d
 # Decryption using Fast Modular Exponentiation Algorithm (recursively)
 def decryption(c, d, n):
     # Returns m = c^d * (mod n)
@@ -169,11 +132,7 @@ def decryption(c, d, n):
 def main():
     key_size = 32
     e, d, n = generate_keys(key_size)
-<<<<<<< HEAD
    
-=======
-    privkey = e
->>>>>>> ebd4ecc22536cddccc8f7739eed2299628892f2d
 
     msg = "some message"
 
@@ -188,7 +147,6 @@ def main():
     print(f"Decrypted message: {decrypted_msg}")
 
 
-<<<<<<< HEAD
 # Enter the message to be sent
 M = 19070
  
@@ -214,37 +172,8 @@ else:
     sent by author ")
 if __name__ == "__main__":
     main()
-=======
-import rsa
-
->>>>>>> ebd4ecc22536cddccc8f7739eed2299628892f2d
-
-def file_open(file):
-    key_file = open(file, 'rb')
-    key_data = key_file.read()
-    key_file.close()
-    return key_data
-
-<<<<<<< HEAD
-=======
-
-# Open private key file and load in key
-e = rsa.PrivateKey.load_pkcs1(file_open('privatekey.key'))
-
-# Open the secret message file and return data to variable
-message = file_open('message')
-
-# Sign the message with the owners private key
-signature = rsa.sign(message, e, 'SHA-512')
-
-s = open('signature_file', 'wb')
-s.write(signature)
-
-print(signature)
-print(len(signature))
 
 
->>>>>>> ebd4ecc22536cddccc8f7739eed2299628892f2d
 # KEY GENERATION
 # Step 1: Generate two large pseudo primes p and q (Fermat's test)
 # Step 2: Calculate RSA modulus, N, which = p * q
@@ -311,19 +240,3 @@ print(len(signature))
 #  Decryption
 #     m = c^d * (mod N)
 #
-#
-#
-<<<<<<< HEAD
-# 
-=======
-# DIGITAL SIGNATURE
-# Steps:
-#   Imported the RSA library
-#   Created function to open files
-#   Run private key through the function
-#   Open message and return data in it
-#   Create stamp on file
-#   Sugn the message with owners private key
-#   Then save the signature and print it
-#
->>>>>>> ebd4ecc22536cddccc8f7739eed2299628892f2d
