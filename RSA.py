@@ -1,121 +1,143 @@
-import random
+from random import choice
+from math import gcd
+from shlex import join
 
-def is_prime(n):
-    # returns True if n is prime
-    # this method doesn't prove if the number is prime but proves that it's not not prime
-    if n > 1:
-        for i in range(2, n):
-            if (n % i) == 0:
-                return False
-    else:
-        return True
 
-def generate_keys(key_size=1024):
-    e = d = n = 0
-
-    # Step 1: get prime numbers, p and q
-    p = generate_prime(key_size)
-    q = generate_prime(key_size)
-
-    # Step 2: RSA modulus
-    n = p * q
-
-    # Step 3: totient
-    phi_n = (p - 1) * (q - 1)
-
-    # Step 4: choose e
-    while True:
-        e = random.randrange(2 ** (key_size - 1), (2 ** key_size) - 1)
-        if (is_co_prime(e, phi_n)):
+def is_prime(num):
+    is_it = False
+    for i in range(2, num):
+        if num % i == 0:
+            is_it = True
             break
-
-    # Step 5: choose d
-    # d is mod inv of e with respect to phi_n, e * d (mod phi_n) = 1
-    d = modular_inverse(e, phi_n)
-
-    return e, d, n
-
-def generate_prime(key_size):
-    # this returns a large prime number of key_size bits in size
-    # Example: key_size = 4
-    #   max 4 bit key = 1111 = 15 = (2^4) - 1
-    #   min 4 bit key = 1000 = 8 = 2^(4 - 1)
-    min_key = 2 ** (key_size - 1)
-    max_key = (2 ** key_size) - 1
-    while True:
-        num = random.randrange(min_key, max_key)
-        if (is_prime(num)):
+        if (is_it == False) and (num != 1):
             return num
 
-def is_co_prime(p, q):
-    # this returns True if gcd(p, q) is 1 aka relatively prime
-    return gcd(p, q) == 1
 
-def gcd(p, q):
-    # this is the euclidean algorithm to find gcd of p and q
-    while q:
-        p, q = q, p % q
-    return p
+def generate_large_prime():
+    prime_num = []
+    for i in range(0, 100):
+        random_num = list(range(1, 1000))
+        prime = is_prime(choice(random_num))
+        if prime != None:
+            prime_num.append(prime)
+            return prime_num
 
-def modular_inverse(a, b):
-    gcd, x, y = egcd(a, b)
 
-    if x < 0:
-        x += b
-    return x
+def generate_keys():
+    prime_num = generate_large_prime()
+    prime_list = []
+    for k in prime_num:
+        if k > 127:
+            prime_list.append(k)
 
-def egcd(a, b):
-    s = 0; old_s = 1
-    t = 1; old_t = 0
-    r = b; old_r = a
+    p = choice(prime_list)
+    q = choice(prime_list)
 
-    while r != 0:
-        quotient = old_r // r
-        old_r, r = r, old_r - quotient * r
-        old_s, s = s, old_s - quotient * r
-        old_t, t = t, old_t - quotient * t
+    n = p * q
 
-    # return gcd, x, y
-    return old_r, old_s, old_t
+    phi_n = (p - 1) * (q - 1)
 
-#Encryption & Decryption
-#Encryption using Fast Modular Exponentiation Algorithm (recursively)
+    print("p = ", p)
+    print("q = ", q)
+    print("N = ", n)
+    print("phi_n = ", phi_n)
+
+    for i in range(1, n):
+        if (i < n) and (gcd(i, phi_n) == 1):
+            e_list = []
+            e_list.append(i)
+    e = choice(e_list)
+    for i in range(1, n):
+        d = i
+        if ((e * d) % phi_n) == 1:
+            d_list = []
+            d_list.append(d)
+            d = choice(d_list)
+            print("e = ", e)
+            print("d = ", d)
+            return e, d, n
+
+
+e, d, n = generate_keys()
+
+
+def encryption(p, e, n):
+    print("Public Key = ({},{})".format(n, e))
+    PT_encode = []
+    CT = []
+
+    for i in p:
+        PT_encode.append(ord(i))
+    print("Plaintext (in ASCII) = ", PT_encode)
+
+    for P in PT_encode:
+        CT.append((P ** e) % n)
+    print("Encryption of plaintext (in ASCII) = ", CT)
+    return CT
+
+
+plaintext = input("Enter the message you want to encrypt: ")
+print("Plaintext = ", plaintext)
+
+ciphertext = encryption(plaintext, e, n)
+
+
+def decryption(c, d, n):
+    print("Private Key = ({},{})".format(n, d))
+    PT = []
+    for C in c:
+        PT.append(pow(c, d) % n)
+    print("Decryption of cyphertext (in ASCII) = ", PT)
+    plaintext = []
+    for j in PT:
+        plaintext.append(chr(j))
+    print("Plaintext = ", "", join(plaintext))
+    return plaintext
+
+
+P = decryption(ciphertext, d, n)
+
+
 def encryption(m, e, n):
-    #Returns c = m^e * (mod n)
+    # Returns c = m^e * (mod n)
     if e == 0:
         return 1
-    if e%2 == 0:
-        t = encryption(m, e//2, n)
-        return (t*t)%n
+    if e % 2 == 0:
+        t = encryption(m, e // 2, n)
+        return (t * t) % n
     else:
-        t = encryption(m, e//2, n)
-        return m *(t**2%n)%n
-#c = encryption(m, e, n)
-#print("Encrypted message: ", c)
+        t = encryption(m, e // 2, n)
+        return m * (t ** 2 % n) % n
 
-#Decryption using Fast Modular Exponentiation Algorithm (recursively)
+
+# c = encryption(m, e, n)
+# print("Encrypted message: ", c)
+
+# Decryption using Fast Modular Exponentiation Algorithm (recursively)
 def decryption(c, d, n):
-    #Returns m = c^d * (mod n)
+    # Returns m = c^d * (mod n)
     if d == 0:
         return 1
-    if d%2 == 0:
-        t = decryption(c, d//2, n)
-        return (t*t)%n
+    if d % 2 == 0:
+        t = decryption(c, d // 2, n)
+        return (t * t) % n
     else:
-        t = decryption(c, d//2, n)
-        return c *(t**2%n)%n
-#m = decryption(c, d, n)
-#print("Decrypted message: ", m)
+        t = decryption(c, d // 2, n)
+        return c * (t ** 2 % n) % n
+
+
+# m = decryption(c, d, n)
+# print("Decrypted message: ", m)
 
 def main():
     key_size = 32
     e, d, n = generate_keys(key_size)
+   
 
     msg = "some message"
-   
-    
-    encrypted_msg = encrypt(e, n, msg)
-    decrypted_msg = decrypt(d, n, encrypted_msg)
+
+    encrypted_msg = encryption(msg, e, n)
+    decrypted_msg = decryption(encrypted_msg, d, n)
 
     print(f"Message: {msg}")
     print(f"e: {e}")
@@ -125,18 +147,17 @@ def main():
     print(f"Decrypted message: {decrypted_msg}")
 
 
-
 # Enter the message to be sent
 M = 19070
  
 # Signature is created by author
-S = (M ** d) % n
+S = pow(ord(M),d) % n
  
 #verify
 # Author sends M and S both to reader
 # Reader generates message M1 using the
 # signature S, authors's public key e and product n.
-M1 = (S**e) % n
+M1 = pow(S,e) % n
  
 #check authenticity
 # If M = M1 only then reader accepts
@@ -151,8 +172,6 @@ else:
     sent by author ")
 if __name__ == "__main__":
     main()
-
-
 
 
 # KEY GENERATION
@@ -223,15 +242,4 @@ if __name__ == "__main__":
 #
 #
 #
-# DIGITAL SIGNATURE
-#Steps:
-#   Imported the RSA library
-#   Created function to open files
-#   Run private key through the function
-#   Open message and return data in it
-#   Create stamp on file
-#   Sugn the message with owners private key
-#   Then save the signature in a file and print it
-#
-
-
+# 
