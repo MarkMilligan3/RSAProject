@@ -112,16 +112,12 @@ def decryption(c, d, n):
 P = decryption(ciphertext, d, n)
 
 def main():
-    privkey = e
 
     msg = ""
 
     encrypted_msg = encryption(msg, e, n)
     decrypted_msg = decryption(encrypted_msg, d, n)
 
-
-
-import rsa
 
 
 def file_open(file):
