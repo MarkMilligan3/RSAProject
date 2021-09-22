@@ -131,20 +131,23 @@ def file_open(file):
     return key_data
 
 
-# Open private key file and load in key
-e = rsa.PrivateKey.load_pkcs1(file_open('privatekey.key'))
-
-# Open the secret message file and return data to variable
-message = file_open('message')
-
-# Sign the message with the owners private key
-signature = rsa.sign(message, e, 'SHA-512')
-
-s = open('signature_file', 'wb')
-s.write(signature)
-
-print(signature)
-print(len(signature))
+# Enter the message to be sent
+M = 19070
+ 
+# Signature is created by author
+S = pow(ord(M),d) % n
+ 
+#verify
+M1 = pow(S,e) % n
+ 
+#check authenticity
+if M == M1:
+    print("M = M1, Accept the\
+    message sent by author")
+else:
+    print("M not equal to M1,\
+    Do not accept the message\
+    sent by author ")
 
 
 # KEY GENERATION
@@ -214,14 +217,9 @@ print(len(signature))
 #     m = c^d * (mod N)
 #
 #
-#
-# DIGITAL SIGNATURE
-# Steps:
-#   Imported the RSA library
-#   Created function to open files
-#   Run private key through the function
-#   Open message and return data in it
-#   Create stamp on file
-#   Sugn the message with owners private key
-#   Then save the signature and print it
-#
+#SIGNATURE
+# Enter the message to be sent
+# Signature is created by author
+# Author sends M and S both to reader
+# Reader generates message M1 using the signature S, authors's public key e and product n.
+# If M = M1 only then reader accepts the message sent by author.
